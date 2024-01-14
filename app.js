@@ -1,5 +1,5 @@
 const express = require('express')
-
+const Joi = require('joi')
 const app = express()
 
 // Data will read as a json format!
@@ -25,6 +25,14 @@ app.get("/api/products", (request,response) => {
 })
 
 app.post("/api/products", (request,response) => {
+    
+    
+    const result = validateProduct(request.body)
+
+    if (result.error) {
+        response.status(400).send(result.error.details[0].message);
+        return
+    }
 
     const product = {
         id : products.length + 1,
@@ -37,6 +45,26 @@ app.post("/api/products", (request,response) => {
 
 })
 
+app.put("/api/products/:id", (request,response) => {
+    // get product by id
+    const product = products.find(product => product.id == request.params.id)
+    if (!product) {
+        response.status(404).send("Product couldn't find!")
+    }
+    // validate
+
+    const result = validateProduct(request.body)
+
+
+    if (result.error) {
+        response.status(400).send(result.error.details[0].message);
+        return
+    }
+
+    product.name = request.body.name
+    product.price = request.body.price
+    response.send(product)
+})
 
 app.get("/api/products/:id",(request,response) => {
     const product = products.find(product => product.id == request.params.id)
@@ -49,7 +77,19 @@ app.get("/api/products/:id",(request,response) => {
 
 })
 
+const validateProduct = (product) => {
+    const schema = new Joi.object({
 
+        name : Joi.string().min(3).max(30).required(),
+        price : Joi.number().required()
+
+    })
+    
+
+    const result  = schema.validate(product.body);
+
+    return result
+}
 
 app.listen(3000,() => {
     console.log("APPLICATION HAS BEEN STARTED ON 3000 PORT!")
