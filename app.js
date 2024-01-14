@@ -66,6 +66,22 @@ app.put("/api/products/:id", (request,response) => {
     response.send(product)
 })
 
+app.delete("/api/products/:id",(request,response) => {
+    const product = products.find(product => product.id == request.params.id)
+
+    if (!product) {
+        return response.status(404).send("Product couldn't find!")
+    }
+
+    const index = products.indexOf(product)
+
+    products.splice(index,1)
+
+    response.send(product);
+
+})
+
+
 app.get("/api/products/:id",(request,response) => {
     const product = products.find(product => product.id == request.params.id)
 
