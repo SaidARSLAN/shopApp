@@ -2,20 +2,16 @@
 const express = require('express')
 const Joi = require('joi')
 
+
 const router = express.Router()
 
-const products = [
-    { id: 1, name: "iphone 12", price: 20000 },
-
-    { id: 2, name: "iphone 12", price: 40000 },
-    { id: 3, name: "iphone 12", price: 60000 },
-]
+const Product = require('../models/product')
 
 router.get("/", (request,response) => {
     response.send(products)
 })
 
-router.post("/", (request,response) => {
+router.post("/", async (request,response) => {
     
     
     const result = validateProduct(request.body)
@@ -25,14 +21,26 @@ router.post("/", (request,response) => {
         return
     }
 
-    const product = {
-        id : products.length + 1,
-        name : request.body.name,
-        price : request.body.price
-    }
-    products.push(product);
 
-    response.send(product)
+    const product = new Product({
+
+        name : request.body.name,
+        price : request.body.price,
+        description : request.body.description,
+        imageUrl : request.body.imageUrl,
+        isActive : request.body.isActive
+    
+    })
+
+    try {
+        const result = await product.save();
+        response.send(result)
+    }
+    catch (err) {
+        console.log(err)
+    }
+
+    
 
 })
 
