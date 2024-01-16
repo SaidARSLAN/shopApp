@@ -6,7 +6,9 @@ const {Product, validateProduct} = require('../models/product')
 const router = express.Router()
 
 
-router.get("/", (request,response) => {
+router.get("/", async (request,response) => {
+    // const products = await Product.find()
+    const products = await Product.find({isActive : true}).select({name : 1, price:1})
     response.send(products)
 })
 
@@ -80,9 +82,10 @@ router.delete("/:id",(request,response) => {
 })
 
 
-router.get("/:id",(request,response) => {
-    const product = products.find(product => product.id == request.params.id)
+router.get("/:id", async (request,response) => {
 
+    // const product = await Product.findOne({_id : request.params.id})
+    const product = await Product.findById(request.params.id)
     if (!product) {
         response.status(404).send("Product couldn't find!")
     }
