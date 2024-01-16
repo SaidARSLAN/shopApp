@@ -1,11 +1,10 @@
 
 const express = require('express')
 const Joi = require('joi')
-
+const {Product, validateProduct} = require('../models/product')
 
 const router = express.Router()
 
-const Product = require('../models/product')
 
 router.get("/", (request,response) => {
     response.send(products)
@@ -92,18 +91,6 @@ router.get("/:id",(request,response) => {
 
 })
 
-const validateProduct = (product) => {
-    const schema = new Joi.object({
 
-        name : Joi.string().min(3).max(30).required(),
-        price : Joi.number().required()
-
-    })
-    
-
-    const result  = schema.validate(product.body);
-
-    return result
-}
 
 module.exports = router;
