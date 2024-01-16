@@ -8,7 +8,7 @@ const products = [
     { id: 3, name: "iphone 12", price: 60000 },
 ]
 router.get("/", (request,response) => {
-
+    console.log(request)
     response.send(products[0]);
 
 })
